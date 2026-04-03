@@ -1,4 +1,4 @@
-# 🐣 人教PEP版英语消消乐
+# 🐣 人教PEP版英语消消乐（Next.js版）
 
 > 面向小学3～6年级的英语单词消消乐教育游戏，完全同步人教PEP版教材内容。
 
@@ -12,16 +12,31 @@
 
 ## 🚀 快速开始
 
-直接用浏览器打开 `index.html` 即可游玩，无需安装任何依赖。
+### Next.js 版本（推荐）
+```bash
+cd nextjs-app
+npm install
+npm run dev
+# 打开 http://localhost:3000
+```
+
+### 原始 HTML 版本（无需安装）
+直接用浏览器打开 `index.html` 即可游玩。
 
 ## 📁 项目结构
 
 ```
 pep-english-match/
-├── index.html          # 主游戏文件（单文件版）
-├── README.md           # 项目说明
+├── nextjs-app/             # Next.js + Tailwind CSS 版本（主版本）
+│   ├── src/app/            # App Router 页面
+│   │   ├── page.tsx        # 首页（昵称登录 + 关卡选择）
+│   │   ├── game/page.tsx   # 游戏页（5×5棋盘）
+│   │   └── leaderboard/    # 排行榜页
+│   └── src/lib/words.ts    # 单词库 + 工具函数
+├── index.html              # 原始 HTML 单文件版本
+├── README.md               # 项目说明
 └── docs/
-    └── mvp-spec.md     # MVP需求文档
+    └── mvp-spec.md         # MVP 需求文档
 ```
 
 ## 🗺️ 版本规划
