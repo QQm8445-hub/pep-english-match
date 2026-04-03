@@ -1,496 +1,572 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐣 英语消消乐 - 人教PEP版</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🐣 PEP英语消消乐</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;background:#f0f9ff;color:#333;overflow:hidden;}
 
-    body {
-      font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      background: linear-gradient(135deg, #87CEEB 0%, #E0F7FA 50%, #FFF9C4 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
+/* ===== 页面层 ===== */
+.page{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;transition:opacity .25s,transform .25s;}
+.hidden{opacity:0;pointer-events:none;transform:scale(0.95);}
 
-    .screen { display: none; width: 100%; max-width: 480px; }
-    .screen.active { display: block; }
+/* ===== 首页 ===== */
+#home{background:linear-gradient(160deg,#87e8ff 0%,#fff5cc 100%);}
+.logo{font-size:clamp(26px,6vw,36px);font-weight:900;color:#ff6b6b;margin-bottom:6px;text-shadow:2px 3px 0 #fff,0 0 20px rgba(255,107,107,.3);}
+.tagline{color:#aaa;font-size:14px;margin-bottom:28px;}
+.gradeList{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:28px;}
+.grade{width:clamp(90px,22vw,120px);height:clamp(90px,22vw,120px);border-radius:50%;color:#fff;font-size:clamp(16px,4vw,20px);font-weight:900;display:flex;align-items:center;justify-content:center;border:4px solid rgba(255,255,255,.8);box-shadow:0 6px 0 rgba(0,0,0,.15),0 10px 20px rgba(0,0,0,.1);cursor:pointer;transition:transform .15s,box-shadow .15s;user-select:none;}
+.grade:hover,.grade:active{transform:translateY(-3px);box-shadow:0 9px 0 rgba(0,0,0,.15),0 14px 24px rgba(0,0,0,.15);}
+.g3{background:linear-gradient(135deg,#ff7b7b,#ff5252);}
+.g4{background:linear-gradient(135deg,#64d8cb,#26c6da);}
+.g5{background:linear-gradient(135deg,#a080e4,#7e57c2);}
+.g6{background:linear-gradient(135deg,#ff8a65,#ff5722);}
+.menu{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.btn{padding:10px 20px;background:linear-gradient(135deg,#ff6b6b,#ff8e53);color:#fff;border:none;border-radius:24px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(255,107,107,.3);transition:transform .15s,box-shadow .15s;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(255,107,107,.4);}
+.btn:active{transform:translateY(0);}
+.btn.secondary{background:linear-gradient(135deg,#fff,#f5f5f5);color:#ff6b6b;border:2px solid #ffcccc;box-shadow:0 4px 12px rgba(0,0,0,.08);}
 
-    /* ===== 首页 ===== */
-    .home-card {
-      background: rgba(255,255,255,0.92);
-      border-radius: 28px;
-      padding: 36px 28px;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(100,150,255,0.18);
-    }
-    .game-title { font-size: 2rem; font-weight: 900; color: #FF6B6B; margin-bottom: 4px; }
-    .game-subtitle { font-size: 1rem; color: #888; margin-bottom: 28px; }
-    .input-group { margin-bottom: 20px; text-align: left; }
-    .input-group label { font-size: 0.95rem; color: #555; margin-bottom: 6px; display: block; }
-    .input-group input {
-      width: 100%; padding: 12px 16px; border: 2px solid #E0E0E0;
-      border-radius: 16px; font-size: 1rem; outline: none;
-      transition: border-color 0.2s;
-    }
-    .input-group input:focus { border-color: #87CEEB; }
+/* ===== 关卡选择 ===== */
+#level{background:linear-gradient(160deg,#fff9c4,#fff5cc);}
+.unitList{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.unit{padding:18px 0;background:linear-gradient(135deg,#7ccfff,#42a5f5);border-radius:18px;color:#fff;font-size:17px;font-weight:700;text-align:center;cursor:pointer;box-shadow:0 4px 12px rgba(124,207,255,.4);transition:transform .15s;}
+.unit:hover{transform:translateY(-2px);}
 
-    .grade-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
-    .grade-btn {
-      padding: 8px 18px; border-radius: 20px; border: 2px solid #87CEEB;
-      background: white; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
-      color: #4A90D9; font-weight: 600;
-    }
-    .grade-btn.active, .grade-btn:hover { background: #87CEEB; color: white; }
-    .grade-btn.locked { border-color: #DDD; color: #BBB; cursor: not-allowed; }
+/* ===== 游戏页 ===== */
+#game{background:#fff5cc;justify-content:flex-start;padding-top:10px;}
+.bar{width:100%;max-width:380px;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,255,255,.7);border-radius:16px;margin-bottom:8px;font-size:15px;font-weight:700;color:#c74c3c;}
+.bar span{color:#e53935;font-size:18px;}
+.progress-wrap{width:100%;max-width:380px;background:rgba(255,255,255,.5);border-radius:10px;height:8px;margin-bottom:8px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,#42a5f5,#26c6da);border-radius:10px;transition:width .4s;}
+.board{background:linear-gradient(135deg,#ffd966,#ffcc00);border-radius:20px;padding:10px;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;max-width:380px;width:100%;}
+.tile{aspect-ratio:1;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,3vw,15px);font-weight:700;border:3px solid #ffcc00;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;user-select:none;word-break:break-all;text-align:center;padding:3px;}
+.tile:hover{transform:scale(1.05);}
+.tile.selected{background:#fff8c8;border-color:#ff6b6b;transform:scale(1.08);box-shadow:0 0 0 3px #ff6b6b44;}
+.tile.empty{background:rgba(255,255,255,.2);border-color:transparent;cursor:default;}
+.tile.empty:hover{transform:none;}
+@keyframes boom{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(0);opacity:0;}}
+.tile.bombAni{animation:boom .4s forwards;}
+.props{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;justify-content:center;}
+.prop{padding:8px 14px;background:#fff;border:2px solid #ff6b6b;border-radius:14px;font-weight:700;color:#ff6b6b;cursor:pointer;transition:all .15s;font-size:14px;}
+.prop:hover{background:#ff6b6b;color:#fff;}
+.prop:disabled,.prop[disabled]{opacity:.4;cursor:not-allowed;}
 
-    .btn-primary {
-      width: 100%; padding: 14px; background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-      color: white; border: none; border-radius: 24px; font-size: 1.15rem;
-      font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(255,107,107,0.35);
-      transition: transform 0.15s, box-shadow 0.15s; margin-bottom: 12px;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,107,0.45); }
-    .btn-primary:active { transform: translateY(0); }
+/* ===== 通用面板 ===== */
+.panel{width:90%;max-width:400px;background:#fff;border-radius:24px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.12);max-height:80vh;overflow-y:auto;}
+.ptitle{font-size:22px;color:#ff6b6b;margin-bottom:16px;text-align:center;font-weight:900;}
+.item{padding:10px 0;border-bottom:1px solid #f5f5f5;font-size:15px;display:flex;justify-content:space-between;align-items:center;}
+.tag{background:#ff6b6b22;color:#ff6b6b;padding:2px 8px;border-radius:8px;font-size:12px;}
 
-    .btn-secondary {
-      width: 100%; padding: 12px; background: white; color: #4A90D9;
-      border: 2px solid #87CEEB; border-radius: 24px; font-size: 1rem;
-      font-weight: 600; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-secondary:hover { background: #E0F7FA; }
+/* ===== 弹窗 ===== */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.overlay.hidden{display:none;}
+.dialog{background:#fff;border-radius:28px;padding:32px 28px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.2);}
+.dialog-icon{font-size:56px;margin-bottom:12px;}
+.dialog-title{font-size:24px;font-weight:900;margin-bottom:8px;}
+.dialog-score{font-size:16px;color:#888;margin-bottom:24px;}
+.dialog-score b{font-size:28px;color:#ff6b6b;}
+.dialog-btns{display:flex;gap:12px;}
+.dialog-btns .btn{flex:1;margin:0;}
 
-    /* ===== 游戏页 ===== */
-    .game-card {
-      background: rgba(255,255,255,0.92);
-      border-radius: 28px;
-      padding: 20px 16px;
-      box-shadow: 0 8px 32px rgba(100,150,255,0.18);
-    }
-    .game-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
-    }
-    .stat-badge {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white; padding: 6px 14px; border-radius: 20px;
-      font-size: 0.85rem; font-weight: 700;
-    }
-    .stat-badge.steps { background: linear-gradient(135deg, #f093fb, #f5576c); }
-    .stat-badge.score { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-    .stat-badge.player { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+/* 登录输入框 */
+.input{width:100%;padding:12px 16px;border:2px solid #eee;border-radius:14px;font-size:15px;outline:none;margin-bottom:12px;transition:border-color .2s;}
+.input:focus{border-color:#ff6b6b;}
 
-    .board {
-      display: grid; grid-template-columns: repeat(5, 1fr);
-      gap: 6px; margin-bottom: 16px;
-    }
-    .cell {
-      aspect-ratio: 1; border-radius: 12px; display: flex;
-      align-items: center; justify-content: center;
-      font-size: clamp(10px, 2.8vw, 15px); font-weight: 700;
-      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
-      text-align: center; padding: 4px; word-break: break-all;
-      border: 2px solid rgba(255,255,255,0.6);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-      color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.25);
-      user-select: none;
-    }
-    .cell:hover { transform: scale(1.06); }
-    .cell.selected {
-      transform: scale(1.1);
-      box-shadow: 0 0 0 3px #FFD700, 0 4px 12px rgba(0,0,0,0.2);
-    }
-    .cell.empty { background: rgba(200,220,240,0.25) !important; cursor: default; box-shadow: none; border-color: transparent; }
-    .cell.empty:hover { transform: none; }
-
-    .btn-back {
-      padding: 10px 20px; background: white; color: #888;
-      border: 2px solid #DDD; border-radius: 20px; font-size: 0.9rem;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-back:hover { border-color: #87CEEB; color: #4A90D9; }
-
-    /* ===== 弹窗 ===== */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45); z-index: 100;
-      align-items: center; justify-content: center; padding: 16px;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal {
-      background: white; border-radius: 28px; padding: 36px 28px;
-      text-align: center; max-width: 360px; width: 100%;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
-    }
-    .modal-icon { font-size: 3.5rem; margin-bottom: 12px; }
-    .modal-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
-    .modal-title.win { color: #FF6B6B; }
-    .modal-title.lose { color: #888; }
-    .modal-score { font-size: 1.1rem; color: #555; margin-bottom: 24px; }
-    .modal-score span { font-weight: 700; color: #4A90D9; font-size: 1.4rem; }
-    .modal-btns { display: flex; gap: 12px; }
-    .modal-btns .btn-primary { margin-bottom: 0; flex: 1; }
-    .modal-btns .btn-secondary { flex: 1; }
-
-    /* ===== 排行榜 ===== */
-    .leaderboard-card {
-      background: rgba(255,255,255,0.92);
-      border-radius: 28px; padding: 28px 20px;
-      box-shadow: 0 8px 32px rgba(100,150,255,0.18);
-    }
-    .lb-title { font-size: 1.5rem; font-weight: 800; text-align: center; color: #FF6B6B; margin-bottom: 20px; }
-    .lb-list { list-style: none; }
-    .lb-item {
-      display: flex; align-items: center; padding: 10px 12px;
-      border-radius: 14px; margin-bottom: 8px; background: #F8F9FF;
-    }
-    .lb-item:nth-child(1) { background: linear-gradient(135deg, #FFD700, #FFA500); color: white; }
-    .lb-item:nth-child(2) { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); color: white; }
-    .lb-item:nth-child(3) { background: linear-gradient(135deg, #CD7F32, #A0522D); color: white; }
-    .lb-rank { font-size: 1.1rem; font-weight: 700; width: 36px; }
-    .lb-name { flex: 1; font-weight: 600; }
-    .lb-score { font-weight: 700; font-size: 1.05rem; }
-    .lb-empty { text-align: center; color: #AAA; padding: 20px; }
-
-    @media (max-width: 400px) {
-      .game-title { font-size: 1.6rem; }
-      .cell { font-size: 9px; }
-    }
-  </style>
+/* 排行奖牌 */
+.medal-1{background:linear-gradient(135deg,#ffd700,#ffa500);color:#fff;border-radius:12px;padding:10px 14px;}
+.medal-2{background:linear-gradient(135deg,#c0c0c0,#a8a8a8);color:#fff;border-radius:12px;padding:10px 14px;}
+.medal-3{background:linear-gradient(135deg,#cd7f32,#a05020);color:#fff;border-radius:12px;padding:10px 14px;}
+</style>
 </head>
 <body>
 
-<!-- 首页 -->
-<div class="screen active" id="screen-home">
-  <div class="home-card">
-    <div class="game-title">🐣 英语消消乐</div>
-    <div class="game-subtitle">人教PEP版 · 玩中学英语</div>
-
-    <div class="input-group">
-      <label>你的昵称</label>
-      <input type="text" id="nickname-input" placeholder="输入你的名字" maxlength="12">
-    </div>
-
-    <div style="margin-bottom:12px; font-size:0.9rem; color:#666; text-align:left;">选择年级：</div>
-    <div class="grade-row">
-      <button class="grade-btn active" data-grade="3">三年级</button>
-      <button class="grade-btn locked" disabled>四年级</button>
-      <button class="grade-btn locked" disabled>五年级</button>
-      <button class="grade-btn locked" disabled>六年级</button>
-    </div>
-    <div style="margin-bottom:8px; font-size:0.85rem; color:#AAA; text-align:center;">更多年级即将开放 🚀</div>
-
-    <div style="margin-bottom:8px; font-size:0.9rem; color:#666; text-align:left;">选择单元：</div>
-    <div class="grade-row" id="unit-row">
-      <button class="grade-btn active" data-unit="1">Unit 1</button>
-      <button class="grade-btn locked" disabled>Unit 2</button>
-      <button class="grade-btn locked" disabled>Unit 3</button>
-      <button class="grade-btn locked" disabled>Unit 4</button>
-      <button class="grade-btn locked" disabled>Unit 5</button>
-      <button class="grade-btn locked" disabled>Unit 6</button>
-    </div>
-    <div style="margin-bottom:20px; font-size:0.85rem; color:#AAA; text-align:center;">更多单元即将开放 🌟</div>
-
-    <button class="btn-primary" onclick="startGame()">🎮 开始游戏</button>
-    <button class="btn-secondary" onclick="showLeaderboard()">🏆 排行榜</button>
+<!-- ===== 首页 ===== -->
+<div id="home" class="page">
+  <div class="logo">🐣 PEP英语消消乐</div>
+  <div class="tagline">人教版 · 3～6年级 · 玩中学英语</div>
+  <div class="gradeList">
+    <div class="grade g3" onclick="goLevel(3)">三年级</div>
+    <div class="grade g4" onclick="goLevel(4)">四年级</div>
+    <div class="grade g5" onclick="goLevel(5)">五年级</div>
+    <div class="grade g6" onclick="goLevel(6)">六年级</div>
+  </div>
+  <div class="menu">
+    <button class="btn secondary" onclick="show('login')">👤 登录</button>
+    <button class="btn secondary" onclick="show('wrong')">📒 错题本</button>
+    <button class="btn secondary" onclick="show('parent')">📊 家长统计</button>
+    <button class="btn secondary" onclick="show('rank')">🏆 排行榜</button>
   </div>
 </div>
 
-<!-- 游戏页 -->
-<div class="screen" id="screen-game">
-  <div class="game-card">
-    <div class="game-header">
-      <div class="stat-badge player" id="stat-player">👤 玩家</div>
-      <div class="stat-badge steps" id="stat-steps">👣 25步</div>
-      <div class="stat-badge score" id="stat-score">⭐ 0分</div>
-    </div>
-    <div class="board" id="board"></div>
-    <button class="btn-back" onclick="goHome()">← 返回首页</button>
+<!-- ===== 关卡选择 ===== -->
+<div id="level" class="page hidden">
+  <div class="logo">📚 选择单元</div>
+  <div class="unitList">
+    <div class="unit" onclick="startGame(1)">Unit 1</div>
+    <div class="unit" onclick="startGame(2)">Unit 2</div>
+    <div class="unit" onclick="startGame(3)">Unit 3</div>
+    <div class="unit" onclick="startGame(4)">Unit 4</div>
+    <div class="unit" onclick="startGame(5)">Unit 5</div>
+    <div class="unit" onclick="startGame(6)">Unit 6</div>
+  </div>
+  <button class="btn secondary" onclick="show('home')">← 返回首页</button>
+</div>
+
+<!-- ===== 游戏页 ===== -->
+<div id="game" class="page hidden">
+  <div class="bar">
+    <span>👤 <span id="bar-name">玩家</span></span>
+    <span>👣 <span id="bar-step">25</span> 步</span>
+    <span>⭐ <span id="bar-score">0</span> 分</span>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="prog" style="width:0%"></div></div>
+  <div class="board" id="board"></div>
+  <div class="props">
+    <div class="prop" onclick="useBomb()" title="随机消除1格">💣 炸弹</div>
+    <div class="prop" onclick="useRocket()" title="消除第一行">🚀 火箭</div>
+    <div class="prop" onclick="useBall()" title="消除同类全部">🔮 魔力球</div>
+  </div>
+  <button class="btn secondary" style="margin-top:10px" onclick="show('level')">← 返回关卡</button>
+</div>
+
+<!-- ===== 登录页 ===== -->
+<div id="login" class="page hidden">
+  <div class="panel">
+    <div class="ptitle">👤 用户登录</div>
+    <input id="uname" class="input" placeholder="请输入昵称（无需注册）" maxlength="12">
+    <button class="btn" onclick="doLogin()" style="width:100%">✅ 登录</button>
+    <button class="btn secondary" onclick="show('home')" style="width:100%;margin-top:10px">← 返回</button>
   </div>
 </div>
 
-<!-- 排行榜页 -->
-<div class="screen" id="screen-leaderboard">
-  <div class="leaderboard-card">
-    <div class="lb-title">🏆 排行榜</div>
-    <ul class="lb-list" id="lb-list"></ul>
-    <button class="btn-secondary" style="margin-top:16px" onclick="goHome()">← 返回首页</button>
+<!-- ===== 错题本 ===== -->
+<div id="wrong" class="page hidden">
+  <div class="panel">
+    <div class="ptitle">📒 错题本</div>
+    <div id="wrongList"></div>
+    <button class="btn" onclick="clearWrong()" style="width:100%;margin-top:14px">🗑️ 清空错题</button>
+    <button class="btn secondary" onclick="show('home')" style="width:100%;margin-top:10px">← 返回</button>
   </div>
 </div>
 
-<!-- 结算弹窗 -->
-<div class="modal-overlay" id="result-modal">
-  <div class="modal">
-    <div class="modal-icon" id="modal-icon">🎉</div>
-    <div class="modal-title" id="modal-title">太棒了！</div>
-    <div class="modal-score">本局得分：<span id="modal-score">0</span> 分</div>
-    <div class="modal-btns">
-      <button class="btn-primary" onclick="restartGame()">🔄 再玩一次</button>
-      <button class="btn-secondary" onclick="goHome()">🏠 回首页</button>
+<!-- ===== 家长统计 ===== -->
+<div id="parent" class="page hidden">
+  <div class="panel">
+    <div class="ptitle">📊 家长统计</div>
+    <div id="parentInfo"></div>
+    <button class="btn secondary" onclick="show('home')" style="width:100%;margin-top:14px">← 返回</button>
+  </div>
+</div>
+
+<!-- ===== 排行榜 ===== -->
+<div id="rank" class="page hidden">
+  <div class="panel">
+    <div class="ptitle">🏆 排行榜</div>
+    <div id="rankList"></div>
+    <button class="btn secondary" onclick="show('home')" style="width:100%;margin-top:14px">← 返回</button>
+  </div>
+</div>
+
+<!-- ===== 结算弹窗 ===== -->
+<div class="overlay hidden" id="resultOverlay">
+  <div class="dialog">
+    <div class="dialog-icon" id="d-icon">🎉</div>
+    <div class="dialog-title" id="d-title">太棒了！</div>
+    <div class="dialog-score">本局得分：<b id="d-score">0</b> 分</div>
+    <div class="dialog-btns">
+      <button class="btn" onclick="replayGame()">🔄 再玩</button>
+      <button class="btn secondary" onclick="show('level')">📚 换关卡</button>
     </div>
   </div>
 </div>
 
 <script>
-// ===== 单词库 =====
-const WORD_DB = {
-  grade3: {
-    unit1: {
-      title: "三年级 Unit 1 · 文具",
-      words: [
-        { en: "pen", zh: "钢笔" },
-        { en: "pencil", zh: "铅笔" },
-        { en: "ruler", zh: "尺子" },
-        { en: "eraser", zh: "橡皮" },
-        { en: "crayon", zh: "蜡笔" },
-        { en: "book", zh: "书" },
-        { en: "bag", zh: "书包" },
-        { en: "notebook", zh: "笔记本" },
-        { en: "sharpener", zh: "卷笔刀" },
-        { en: "case", zh: "铅笔盒" },
-      ]
-    }
+// ====================================
+// 单词库：3-6年级全册
+// ====================================
+const WORDS = {
+  3:{
+    1:['pen','pencil','book','bag','eraser','ruler','crayon','sharpener'],
+    2:['cat','dog','monkey','bird','tiger','panda','elephant','rabbit'],
+    3:['one','two','three','four','five','six','seven','eight'],
+    4:['red','blue','green','yellow','black','white','orange','pink'],
+    5:['cake','rice','water','egg','fish','milk','bread','juice'],
+    6:['brother','sister','mother','father','friend','uncle','aunt','baby']
+  },
+  4:{
+    1:['school','classroom','window','door','chair','desk','floor','wall'],
+    2:['strong','quiet','friendly','tall','short','thin','fat','funny'],
+    3:['kitchen','bedroom','bathroom','study','living room','garden','door','sofa'],
+    4:['beef','noodle','soup','vegetable','chicken','pork','fish','tofu'],
+    5:['driver','doctor','nurse','farmer','cook','teacher','student','worker'],
+    6:['hat','shoe','coat','pants','socks','shirt','skirt','dress']
+  },
+  5:{
+    1:['young','old','funny','kind','strict','active','quiet','helpful'],
+    2:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','today'],
+    3:['sandwich','salad','hamburger','ice cream','tea','coffee','hot dog','pizza'],
+    4:['river','forest','hill','lake','mountain','sky','cloud','sun'],
+    5:['sing','dance','draw','swim','cook','run','jump','read'],
+    6:['behind','beside','between','above','under','near','far','inside']
+  },
+  6:{
+    1:['taller','older','shorter','longer','younger','bigger','smaller','heavier'],
+    2:['cleaned','watched','played','washed','cooked','walked','talked','visited'],
+    3:['library','hospital','cinema','museum','bookstore','school','park','market'],
+    4:['cycling','skating','badminton','football','basketball','tennis','swimming','running'],
+    5:['faster','lower','smarter','bigger','thinner','brighter','stronger','quieter'],
+    6:['interview','information','newspaper','secretary','scientist','engineer','artist','designer']
   }
-};
-
-// 卡片颜色池（马卡龙色）
-const COLORS = [
-  "#FF6B6B","#FF9F43","#FECA57","#48DBFB","#1DD1A1",
-  "#FF9FF3","#54A0FF","#5F27CD","#00D2D3","#C8D6E5"
-];
-
-// ===== 游戏状态 =====
-let state = {
-  player: "",
-  grade: "grade3",
-  unit: "unit1",
-  board: [],       // 25格，每格 { word, colorIndex } 或 null
-  steps: 25,
-  score: 0,
-  selected: null,  // 当前选中的格子索引
-  running: false,
-};
-
-// ===== localStorage 工具 =====
-function savePlayer(name) {
-  localStorage.setItem("pep_player", name);
-}
-function loadPlayer() {
-  return localStorage.getItem("pep_player") || "";
-}
-function saveScore(name, score) {
-  let lb = JSON.parse(localStorage.getItem("pep_lb") || "[]");
-  lb.push({ name, score, time: Date.now() });
-  lb.sort((a, b) => b.score - a.score);
-  lb = lb.slice(0, 20);
-  localStorage.setItem("pep_lb", JSON.stringify(lb));
-}
-function loadLeaderboard() {
-  return JSON.parse(localStorage.getItem("pep_lb") || "[]").slice(0, 10);
 }
 
-// ===== 初始化 =====
-window.onload = () => {
-  const saved = loadPlayer();
-  if (saved) document.getElementById("nickname-input").value = saved;
-};
+// ====================================
+// 状态
+// ====================================
+let grade = 3, unit = 1
+let stepLeft = 25, score = 0
+let tiles = [], selIdx = null
+let username = '小朋友'
+let wrongWords = JSON.parse(localStorage.getItem('pep_wrong')||'[]')
+let leaderboard = JSON.parse(localStorage.getItem('pep_rank')||'[]')
+const MAX_SCORE = 150
 
-// ===== 页面切换 =====
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-
-function goHome() {
-  closeModal();
-  state.running = false;
-  showScreen("screen-home");
-}
-
-// ===== 开始游戏 =====
-function startGame() {
-  const name = document.getElementById("nickname-input").value.trim();
-  if (!name) {
-    alert("请先输入你的昵称！");
-    return;
+// ====================================
+// 页面切换
+// ====================================
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'))
+  document.getElementById(id).classList.remove('hidden')
+  if(id==='wrong') renderWrong()
+  if(id==='parent') renderParent()
+  if(id==='rank') renderRank()
+  if(id==='home') {
+    username = localStorage.getItem('pep_name') || '小朋友'
   }
-  savePlayer(name);
-  state.player = name;
-  state.steps = 25;
-  state.score = 0;
-  state.selected = null;
-  state.running = true;
-
-  initBoard();
-  updateStats();
-  showScreen("screen-game");
 }
 
-function restartGame() {
-  closeModal();
-  state.steps = 25;
-  state.score = 0;
-  state.selected = null;
-  state.running = true;
-  initBoard();
-  updateStats();
-  showScreen("screen-game");
+function goLevel(g) {
+  grade = g
+  show('level')
 }
 
-// ===== 棋盘初始化 =====
-function initBoard() {
-  const wordData = WORD_DB[state.grade][state.unit];
-  const words = wordData.words;
-  const TOTAL = 25;
+// ====================================
+// 登录
+// ====================================
+function doLogin() {
+  const v = document.getElementById('uname').value.trim()
+  if (!v) { alert('请输入昵称！'); return }
+  username = v
+  localStorage.setItem('pep_name', username)
+  alert('欢迎，' + username + '！')
+  show('home')
+}
 
-  // 填充25格：循环取单词
-  let pool = [];
-  while (pool.length < TOTAL) {
-    words.forEach((w, i) => { if (pool.length < TOTAL) pool.push({ ...w, colorIndex: i }); });
+// ====================================
+// 初始化棋盘
+// ====================================
+function startGame(u) {
+  unit = u
+  stepLeft = 25
+  score = 0
+  selIdx = null
+  updateBar()
+  document.getElementById('prog').style.width = '0%'
+
+  const wordList = WORDS[grade][unit]
+  const board = document.getElementById('board')
+  board.innerHTML = ''
+  tiles = []
+
+  for (let i = 0; i < 25; i++) {
+    const word = wordList[Math.floor(Math.random() * wordList.length)]
+    const div = document.createElement('div')
+    div.className = 'tile'
+    div.textContent = word
+    div.dataset.word = word
+    div.dataset.idx = i
+    div.onclick = () => handleClick(i)
+    board.appendChild(div)
+    tiles.push(div)
   }
-  // 随机打乱
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  state.board = pool;
-  renderBoard();
+  show('game')
 }
 
-// ===== 渲染棋盘 =====
-function renderBoard() {
-  const boardEl = document.getElementById("board");
-  boardEl.innerHTML = "";
-  state.board.forEach((cell, idx) => {
-    const div = document.createElement("div");
-    div.className = "cell" + (cell === null ? " empty" : "") + (state.selected === idx ? " selected" : "");
-    if (cell !== null) {
-      div.style.background = COLORS[cell.colorIndex % COLORS.length];
-      div.textContent = cell.en;
-      div.title = cell.zh;
-      div.onclick = () => handleClick(idx);
-    }
-    boardEl.appendChild(div);
-  });
+function replayGame() {
+  document.getElementById('resultOverlay').classList.add('hidden')
+  startGame(unit)
 }
 
-// ===== 点击逻辑 =====
+// ====================================
+// 点击逻辑
+// ====================================
 function handleClick(idx) {
-  if (!state.running) return;
-  if (state.board[idx] === null) return;
+  if (stepLeft <= 0) return
+  const t = tiles[idx]
+  if (t.classList.contains('empty')) return
 
-  if (state.selected === null) {
-    // 第一次点击：选中
-    state.selected = idx;
-    renderBoard();
-    return;
+  // 取消选中
+  if (selIdx === idx) {
+    t.classList.remove('selected')
+    selIdx = null
+    return
   }
 
-  if (state.selected === idx) {
-    // 再次点击同一格：取消选中（不消耗步数）
-    state.selected = null;
-    renderBoard();
-    return;
+  // 第一次选中
+  if (selIdx === null) {
+    t.classList.add('selected')
+    selIdx = idx
+    return
   }
 
-  // 第二次点击：消耗1步
-  state.steps--;
+  // 第二次点击 → 扣步
+  stepLeft--
+  const prevTile = tiles[selIdx]
+  prevTile.classList.remove('selected')
 
-  const first = state.board[state.selected];
-  const second = state.board[idx];
-
-  if (first.en === second.en) {
-    // 相同单词：消除全场所有同类
-    const word = first.en;
-    let count = 0;
-    state.board = state.board.map(cell => {
-      if (cell !== null && cell.en === word) { count++; return null; }
-      return cell;
-    });
-    state.score += count * 5;
-    speak(word);
+  if (prevTile.dataset.word === t.dataset.word) {
+    // 相同 → 消除全场同类
+    const word = t.dataset.word
+    let count = 0
+    tiles.forEach(x => {
+      if (!x.classList.contains('empty') && x.dataset.word === word) {
+        x.classList.add('bombAni')
+        count++
+      }
+    })
+    speak(word)
+    score += count * 5
+    setTimeout(() => {
+      tiles.forEach(x => {
+        if (x.classList.contains('bombAni')) {
+          x.classList.remove('bombAni')
+          x.classList.add('empty')
+          x.textContent = ''
+          x.dataset.word = ''
+        }
+      })
+      updateBar()
+      checkEnd()
+    }, 420)
+  } else {
+    // 不同 → 切换选中
+    t.classList.add('selected')
+    selIdx = idx
+    updateBar()
+    checkEnd()
+    return
   }
 
-  state.selected = null;
-  updateStats();
-  renderBoard();
-  checkGameOver();
+  selIdx = null
+  updateBar()
 }
 
-// ===== 更新状态栏 =====
-function updateStats() {
-  document.getElementById("stat-player").textContent = "👤 " + state.player;
-  document.getElementById("stat-steps").textContent = "👣 " + state.steps + "步";
-  document.getElementById("stat-score").textContent = "⭐ " + state.score + "分";
+// ====================================
+// 更新状态栏
+// ====================================
+function updateBar() {
+  document.getElementById('bar-name').textContent = username
+  document.getElementById('bar-step').textContent = stepLeft
+  document.getElementById('bar-score').textContent = score
+  const pct = Math.min((score / MAX_SCORE) * 100, 100)
+  document.getElementById('prog').style.width = pct + '%'
 }
 
-// ===== 游戏结束判断 =====
-function checkGameOver() {
-  if (state.score >= 150) {
-    endGame(true);
-  } else if (state.steps <= 0) {
-    endGame(false);
+// ====================================
+// 判断结束
+// ====================================
+function checkEnd() {
+  if (score >= MAX_SCORE) {
+    endGame(true)
+  } else if (stepLeft <= 0) {
+    endGame(false)
   }
 }
 
 function endGame(win) {
-  state.running = false;
-  saveScore(state.player, state.score);
+  // 存排行榜
+  leaderboard.push({ name: username, score: score, grade: grade, unit: unit, time: Date.now() })
+  leaderboard.sort((a, b) => b.score - a.score)
+  leaderboard = leaderboard.slice(0, 20)
+  localStorage.setItem('pep_rank', JSON.stringify(leaderboard))
 
-  document.getElementById("modal-icon").textContent = win ? "🎉" : "😢";
-  document.getElementById("modal-title").textContent = win ? "太棒了！通关！" : "再试一次！";
-  document.getElementById("modal-title").className = "modal-title " + (win ? "win" : "lose");
-  document.getElementById("modal-score").textContent = state.score;
-
-  document.getElementById("result-modal").classList.add("show");
+  // 显示弹窗
+  document.getElementById('d-icon').textContent = win ? '🎉' : '😢'
+  document.getElementById('d-title').textContent = win ? '太棒了！通关！' : '继续加油！'
+  document.getElementById('d-score').textContent = score
+  document.getElementById('resultOverlay').classList.remove('hidden')
 }
 
-function closeModal() {
-  document.getElementById("result-modal").classList.remove("show");
-}
-
-// ===== 排行榜 =====
-function showLeaderboard() {
-  const lb = loadLeaderboard();
-  const list = document.getElementById("lb-list");
-  list.innerHTML = "";
-
-  if (lb.length === 0) {
-    list.innerHTML = '<li class="lb-empty">暂无记录，快来游玩吧！🎮</li>';
-  } else {
-    lb.forEach((item, i) => {
-      const li = document.createElement("li");
-      li.className = "lb-item";
-      const medals = ["🥇","🥈","🥉"];
-      li.innerHTML = `
-        <span class="lb-rank">${medals[i] || (i+1)}</span>
-        <span class="lb-name">${escapeHtml(item.name)}</span>
-        <span class="lb-score">${item.score}分</span>
-      `;
-      list.appendChild(li);
-    });
-  }
-  showScreen("screen-leaderboard");
-}
-
-// ===== 发音 =====
+// ====================================
+// 发音
+// ====================================
 function speak(word) {
-  if (!window.speechSynthesis) return;
-  const u = new SpeechSynthesisUtterance(word);
-  u.lang = "en-US";
-  u.rate = 0.85;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  if (!window.speechSynthesis) return
+  const u = new SpeechSynthesisUtterance(word)
+  u.lang = 'en-US'
+  u.rate = 0.85
+  window.speechSynthesis.cancel()
+  window.speechSynthesis.speak(u)
 }
 
-// ===== 工具 =====
-function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+// ====================================
+// 道具
+// ====================================
+function useProp(fn) {
+  if (stepLeft <= 0) { alert('步数已用完！'); return }
+  stepLeft--
+  fn()
+  updateBar()
+  setTimeout(() => { updateBar(); checkEnd() }, 450)
 }
+
+function useBomb() {
+  useProp(() => {
+    const active = tiles.filter(x => !x.classList.contains('empty'))
+    if (!active.length) return
+    const t = active[Math.floor(Math.random() * active.length)]
+    speak(t.dataset.word)
+    t.classList.add('bombAni')
+    score += 10
+    setTimeout(() => {
+      t.classList.remove('bombAni')
+      t.classList.add('empty')
+      t.textContent = ''
+      t.dataset.word = ''
+    }, 420)
+  })
+}
+
+function useRocket() {
+  useProp(() => {
+    // 消除第一行（最多5格非空）
+    let removed = 0
+    for (let i = 0; i < 5 && i < tiles.length; i++) {
+      const t = tiles[i]
+      if (!t.classList.contains('empty')) {
+        speak(t.dataset.word)
+        t.classList.add('bombAni')
+        score += 8
+        removed++
+        setTimeout(() => {
+          t.classList.remove('bombAni')
+          t.classList.add('empty')
+          t.textContent = ''
+          t.dataset.word = ''
+        }, 420)
+      }
+    }
+  })
+}
+
+function useBall() {
+  useProp(() => {
+    // 消除一种随机单词
+    const active = tiles.filter(x => !x.classList.contains('empty') && x.dataset.word)
+    if (!active.length) return
+    const target = active[Math.floor(Math.random() * active.length)].dataset.word
+    speak(target)
+    tiles.forEach(x => {
+      if (x.dataset.word === target) {
+        x.classList.add('bombAni')
+        score += 12
+        setTimeout(() => {
+          x.classList.remove('bombAni')
+          x.classList.add('empty')
+          x.textContent = ''
+          x.dataset.word = ''
+        }, 420)
+      }
+    })
+  })
+}
+
+// ====================================
+// 错题本（用随机模拟，实际可接语音识别）
+// ====================================
+function addWrong(word) {
+  if (!wrongWords.includes(word)) {
+    wrongWords.push(word)
+    localStorage.setItem('pep_wrong', JSON.stringify(wrongWords))
+  }
+}
+
+function renderWrong() {
+  const d = document.getElementById('wrongList')
+  d.innerHTML = ''
+  if (!wrongWords.length) {
+    d.innerHTML = '<div style="color:#aaa;text-align:center;padding:20px">暂无错题 🎉</div>'
+    return
+  }
+  wrongWords.forEach(w => {
+    const div = document.createElement('div')
+    div.className = 'item'
+    div.innerHTML = `<span>${w}</span>
+      <span class="tag" onclick="speak('${w}');this.textContent='▶ 已播放'" style="cursor:pointer">▶ 发音</span>`
+    d.appendChild(div)
+  })
+}
+
+function clearWrong() {
+  if (!confirm('确定清空全部错题？')) return
+  wrongWords = []
+  localStorage.setItem('pep_wrong', '[]')
+  renderWrong()
+}
+
+// ====================================
+// 家长统计
+// ====================================
+function renderParent() {
+  const name = localStorage.getItem('pep_name') || '未登录'
+  const total = leaderboard.filter(r => r.name === name).length
+  const best = leaderboard.filter(r => r.name === name).reduce((max, r) => Math.max(max, r.score), 0)
+  document.getElementById('parentInfo').innerHTML = `
+    <div class="item"><span>👤 用户</span><span>${name}</span></div>
+    <div class="item"><span>🏫 当前年级</span><span>${grade}年级</span></div>
+    <div class="item"><span>📖 当前单元</span><span>Unit ${unit}</span></div>
+    <div class="item"><span>⭐ 本局得分</span><span>${score} 分</span></div>
+    <div class="item"><span>🎮 累计游戏</span><span>${total} 局</span></div>
+    <div class="item"><span>🏆 历史最高</span><span>${best} 分</span></div>
+    <div class="item"><span>📒 错题数量</span><span>${wrongWords.length} 个</span></div>
+  `
+}
+
+// ====================================
+// 排行榜
+// ====================================
+function renderRank() {
+  const d = document.getElementById('rankList')
+  d.innerHTML = ''
+  if (!leaderboard.length) {
+    d.innerHTML = '<div style="color:#aaa;text-align:center;padding:20px">暂无记录，快去游玩吧！🎮</div>'
+    return
+  }
+  const medals = ['🥇','🥈','🥉']
+  leaderboard.slice(0, 10).forEach((r, i) => {
+    const div = document.createElement('div')
+    div.className = `item${i < 3 ? ' medal-' + (i+1) : ''}`
+    div.style.marginBottom = '6px'
+    div.innerHTML = `
+      <span>${medals[i] || (i+1)}&nbsp; ${escHtml(r.name)}</span>
+      <span style="font-weight:700">${r.score} 分</span>
+    `
+    d.appendChild(div)
+  })
+}
+
+function escHtml(s) {
+  return s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))
+}
+
+// ====================================
+// 初始化
+// ====================================
+;(function init() {
+  username = localStorage.getItem('pep_name') || '小朋友'
+})()
 </script>
 </body>
 </html>
