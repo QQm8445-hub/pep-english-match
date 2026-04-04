@@ -28,11 +28,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: nextjs-app
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
-      - name: Build with OpenNext for Cloudflare
+      - name: Build (static export)
         working-directory: nextjs-app
-        run: ./node_modules/.bin/opennextjs-cloudflare build
+        run: npm run build
         env:
           NODE_ENV: production
 
@@ -41,5 +41,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: nextjs-app
-          command: pages deploy .open-next/assets --project-name=pep-english-match --branch=${{ github.ref_name }}
+          command: pages deploy nextjs-app/out --project-name=pep-english-match --branch=${{ github.ref_name }}

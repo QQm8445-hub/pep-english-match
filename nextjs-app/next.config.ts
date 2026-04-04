@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* Cloudflare Pages 部署配置 */
+  output: "export",  // 静态导出，适配 Cloudflare Pages
+  trailingSlash: true,
 };
 
 export default nextConfig;
