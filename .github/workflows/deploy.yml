@@ -28,11 +28,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: nextjs-app
-        run: npm ci --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Build with OpenNext for Cloudflare
         working-directory: nextjs-app
-        run: npm run build:cloudflare
+        run: ./node_modules/.bin/opennextjs-cloudflare build
         env:
           NODE_ENV: production
 
