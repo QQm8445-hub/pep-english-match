@@ -32,7 +32,7 @@ jobs:
 
       - name: Build with OpenNext for Cloudflare
         working-directory: nextjs-app
-        run: npx opennextjs-cloudflare build
+        run: npm run build:cloudflare
         env:
           NODE_ENV: production
 
